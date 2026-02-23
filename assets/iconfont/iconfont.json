@@ -1,0 +1,44 @@
+{
+  "id": "5127411",
+  "name": "rest-countries",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "10331563",
+      "name": "sun",
+      "font_class": "sun1",
+      "unicode": "e6a2",
+      "unicode_decimal": 59042
+    },
+    {
+      "icon_id": "128645",
+      "name": "arrow-left",
+      "font_class": "arrowleft",
+      "unicode": "e671",
+      "unicode_decimal": 58993
+    },
+    {
+      "icon_id": "59344",
+      "name": "arrow_down",
+      "font_class": "arrowdown",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "2570555",
+      "name": "search",
+      "font_class": "search",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "18442515",
+      "name": "moon",
+      "font_class": "moon",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    }
+  ]
+}

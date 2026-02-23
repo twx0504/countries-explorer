@@ -1,0 +1,104 @@
+/* Text Preset 1 */
+.text-preset-1 {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 800; /* ExtraBold */
+  font-size: var(--fs-900); /* 32px */
+  line-height: var(--lh-heading); /* 137.5% */
+  letter-spacing: 0;
+}
+
+/* Text Preset 2 */
+.text-preset-2 {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 800; /* ExtraBold */
+  font-size: var(--fs-800); /* 24px */
+  line-height: var(--lh-heading); /* 137.5% */
+  letter-spacing: 0;
+}
+
+/* Text Preset 3 */
+.text-preset-3 {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 800; /* ExtraBold */
+  font-size: var(--fs-700); /* 18px */
+  line-height: var(--lh-normal); /* 145% */
+  letter-spacing: 0;
+}
+
+/* Text Preset 4 (SemiBold) */
+.text-preset-4-semibold {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600; /* SemiBold */
+  font-size: var(--fs-600); /* 16px */
+  line-height: var(--lh-relaxed); /* 200% */
+  letter-spacing: 0;
+}
+
+/* Text Preset 4 (Light) */
+.text-preset-4-light {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 300; /* Light */
+  font-size: var(--fs-600); /* 16px */
+  line-height: var(--lh-relaxed); /* 200% */
+  letter-spacing: 0;
+}
+
+/* Text Preset 5 (Regular) */
+.text-preset-5-regular {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 400; /* Regular */
+  font-size: var(--fs-500); /* 14px */
+  line-height: var(--lh-normal); /* 145% */
+  letter-spacing: 0;
+}
+
+/* Text Preset 5 (Light) */
+.text-preset-5-light {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 300; /* Light */
+  font-size: var(--fs-500); /* 14px */
+  line-height: var(--lh-loose); /* 225% */
+  letter-spacing: 0;
+}
+
+/* Text Preset 6 (SemiBold) */
+.text-preset-6-semibold {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600; /* SemiBold */
+  font-size: var(--fs-400); /* 12px */
+  line-height: var(--lh-tight); /* 135% */
+  letter-spacing: 0;
+}
+
+/* Text Preset 6 (Regular) */
+.text-preset-6-regular {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 400; /* Regular */
+  font-size: var(--fs-400); /* 12px */
+  line-height: var(--lh-tight); /* 135% */
+  letter-spacing: 0;
+}
+
+/* Text Preset 6 (Light) */
+.text-preset-6-light {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 300; /* Light */
+  font-size: var(--fs-400); /* 12px */
+  line-height: var(--lh-tight); /* 135% */
+  letter-spacing: 0;
+}
+
+/* Breakpoint 768px adjustments */
+@media (max-width: 768px) {
+  .text-preset-2 {
+    font-size: var(--fs-500); /* 14px */
+  }
+  .text-preset-4-semibold,
+  .text-preset-4-light {
+    font-size: var(--fs-400); /* 12px */
+    line-height: var(--lh-normal); /* 145% for readability */
+  }
+  .text-preset-5-regular {
+    font-size: var(--fs-400);
+  }
+}
