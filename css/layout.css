@@ -180,11 +180,12 @@
   background-color: var(--hover-clr);
   transform: scale(105%);
 }
-
+.country-card__image-wrapper {
+  aspect-ratio: 264/160;
+}
 .countries .country-card .country-card__image {
   border-radius: 5px 5px 0 0;
-  /* Keep the aspect ratio */
-  aspect-ratio: 16/9;
+  height: 100%;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   user-select: none;
 }
@@ -246,9 +247,10 @@
   width: 50%;
   height: 100%;
   max-width: 560px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   user-select: none;
+  aspect-ratio: 3/2;
 }
+
 .country-detail .country-description {
   width: 50%;
 }
@@ -265,8 +267,8 @@
 }
 
 .country-detail .country-image img {
-  aspect-ratio: 16 / 9;
   border-radius: 5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 @media screen and (max-width: 1280px) {
@@ -391,6 +393,7 @@
   .country-detail__borders {
     flex-direction: column;
     align-items: start;
+    margin-bottom: var(--spacing-700);
   }
   .country-detail__borders strong {
     margin-bottom: var(--spacing-200);
