@@ -8,6 +8,7 @@
   align-items: center;
   background-color: var(--bg-ui);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  user-select: none;
 }
 
 .header a {
@@ -29,9 +30,10 @@
 /* MAIN */
 
 .main {
+  width: 90%;
+  max-width: 1600px;
   margin: 0 auto;
   margin-top: 45px;
-  width: 90%;
 }
 
 /* MAIN TOOLBAR */
@@ -39,6 +41,7 @@
   display: flex;
   justify-content: space-between;
   height: 56px;
+  user-select: none;
 }
 
 .main .toolbar .toolbar__search {
@@ -54,6 +57,9 @@
   border-radius: 5px;
 }
 
+.main .toolbar .toolbar__search:focus-within {
+  outline: 2px solid var(--text-clr);
+}
 @media screen and (max-width: 500px) {
   .main .toolbar {
     flex-direction: column;
@@ -64,6 +70,7 @@
     width: 100%;
   }
 }
+
 .main .toolbar .toolbar__search span {
   margin: 19.25px var(--spacing-300) 19.25px var(--spacing-400);
 }
@@ -75,22 +82,10 @@
   width: calc(100% - var(--spacing-900));
   border-radius: 5px;
   color: var(--text-clr);
-  background-color: var(--bg-ui);
 }
 
 .main .toolbar .toolbar__search input::placeholder {
   color: var(--input-placeholder-clr);
-}
-
-.main .toolbar .toolbar__search input:focus ~ span {
-  display: none;
-}
-
-.main .toolbar .toolbar__search input:focus {
-  left: var(--spacing-300);
-}
-.main .toolbar .toolbar__search input:focus::placeholder {
-  color: transparent;
 }
 
 .main .toolbar .toolbar__filter {
@@ -100,6 +95,9 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   border-radius: 5px;
   background-color: var(--bg-ui);
+}
+.toolbar__filter:focus-within {
+  outline: 2px solid var(--text-clr);
 }
 
 .main .toolbar .toolbar__filter .toolbar__filter-toggle {
@@ -138,11 +136,14 @@
 }
 
 .main .toolbar .toolbar__filter-options .toolbar__filter-item:hover {
-  background-color: var(--grey-75);
+  background-color: var(--hover-clr);
 }
 
 .main .toolbar .toolbar__filter-options .toolbar__filter-item:active {
-  background-color: var(--grey-100);
+  background-color: var(--active-clr);
+}
+.main .toolbar .toolbar__filter-options .toolbar__filter-item:focus {
+  outline: 2px solid var(--text-clr);
 }
 
 .main .toolbar .toolbar__filter-options .toolbar__filter-item:last-child {
@@ -161,20 +162,31 @@
   /* Cards are at least 264px wide; fill as many columns as fit */
   grid-template-columns: repeat(auto-fill, minmax(264px, 1fr));
   gap: var(--spacing-900);
+  user-select: none;
 }
 
 .countries .country-card {
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
+  height: 100%;
   cursor: pointer;
   border-radius: 5px;
   background-color: var(--bg-ui);
+  box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s;
+}
+
+.countries .country-card:hover,
+.countries .country-card:focus {
+  background-color: var(--hover-clr);
+  transform: scale(105%);
 }
 
 .countries .country-card .country-card__image {
   border-radius: 5px 5px 0 0;
   /* Keep the aspect ratio */
-  aspect-ratio: 264/160;
+  aspect-ratio: 16/9;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  user-select: none;
 }
 
 /* Force 2 columns for mid-range — don't leave it to auto-fill math */
@@ -202,7 +214,8 @@
 /* COUNTRY-DETAIL */
 
 .country-detail {
-  width: 100%;
+  width: 90%;
+  margin: 0 auto;
   min-width: 320px;
 }
 .country-detail .back-link {
@@ -216,7 +229,14 @@
   color: var(--text-clr);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   cursor: pointer;
+  user-select: none;
 }
+
+.country-detail .back-link:hover,
+.country-detail .back-link:focus {
+  background-color: var(--hover-clr);
+}
+
 .country-detail article {
   display: flex;
   justify-content: space-between;
@@ -224,10 +244,29 @@
 
 .country-detail .country-image {
   width: 50%;
+  height: 100%;
   max-width: 560px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  user-select: none;
 }
 .country-detail .country-description {
   width: 50%;
+}
+
+.country-description {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: var(--spacing-600);
+}
+
+.country-description h2 {
+  margin-bottom: var(--spacing-300);
+}
+
+.country-detail .country-image img {
+  aspect-ratio: 16 / 9;
+  border-radius: 5px;
 }
 
 @media screen and (max-width: 1280px) {
@@ -239,6 +278,7 @@
   .country-detail .back-link {
     margin-bottom: var(--spacing-700);
   }
+
   .country-detail article {
     flex-direction: column;
     align-items: center;
@@ -251,9 +291,14 @@
 
   .country-detail .country-image {
     max-width: 100%;
+    margin-bottom: var(--spacing-700);
   }
   .country-detail .country-image img {
     width: 100%;
+  }
+
+  .country-description {
+    margin-left: 0;
   }
 }
 
@@ -261,31 +306,23 @@
   .country-detail .back-link {
     margin-bottom: var(--spacing-800);
   }
-}
-.country-description {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+
+  .country-detail .country-image {
+    margin-bottom: var(--spacing-600);
+  }
+
+  .country-description h2 {
+    font-size: var(--fs-800);
+  }
 }
 
-.country-description h2 {
-  margin-bottom: var(--spacing-300);
-}
-
-.country-detail .country-image img {
-  aspect-ratio: 560 / 401;
-  border-radius: 5px;
-}
-
-.country-detail__info,
-.country-detail__borders,
-.country-detail__borders ul {
+.country-detail__borders {
   display: flex;
   align-items: center;
 }
 
 .country-detail__info {
-  width: 80%;
+  display: flex;
   margin-bottom: var(--spacing-800);
 }
 
@@ -293,14 +330,43 @@
   width: 50%;
 }
 
+.country-detail__borders strong {
+  width: 200px;
+}
+
+.country-detail__borders ul {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: var(--spacing-200);
+}
+
 .country-detail__borders ul li {
-  width: 96px;
+  padding: 5px 10px;
   height: 28px;
   text-align: center;
   background-color: var(--bg-ui);
   color: var(--text-clr);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  margin-left: var(--spacing-200);
+  cursor: pointer;
+  /* Hide overflow text with ellipsis */
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  user-select: none;
+}
+
+.country-detail__borders ul li.no-border {
+  cursor: default;
+}
+
+.country-detail__borders ul li.border {
+  transition: transform 0.2s;
+}
+.country-detail__borders ul li.border:hover,
+.country-detail__borders ul li.border:focus {
+  background-color: var(--hover-clr);
+  transform: scale(110%);
 }
 
 @media screen and (max-width: 1280px) {

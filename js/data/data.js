@@ -6,84 +6,96 @@ import {
   COUNTRY_URL,
 } from "./constants.js";
 
-export const countryCardsData = [];
-export let filteredCountryData = [];
-export const cca3ToNameMap = {};
-export let countryDetail = {};
+import { request } from "../utils/request.js";
+import { filter } from "../utils/filter.js";
+
+const allCountries = [];
+const cca3ToNameMap = {};
 
 let activeRegion = "";
 let activeSearch = "";
 
 /**
- * Make a fetch request and return parsed JSON data.
- *
- * @param {string} url - The URL to fetch
- * @returns {Promise<object|null>} - Parsed JSON response, or null if request fails
- */
-async function request(url) {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) {
-      throw new Error(`HTTP error: ${res.status} ${res.statusText}`);
-    }
-    return await res.json();
-  } catch (err) {
-    console.error("Request failed:", err);
-    return null;
-  }
-}
-
-/**
  * Fetch all countries and populate shared data structures.
+ * Resets active region and search filters.
  * Should be called once on app initialization.
  *
- * @returns {Promise<Array>} - Raw array of all country objects from the API
+ * @returns {Promise<Array>} - Flattened array of country card data
  */
-export async function fetchAll() {
+async function fetchAll() {
   const countries = await request(COUNTRY_URL);
   if (!countries) return [];
   createCCA3ToName(countries);
-  createCardData(countries);
-  // Initialize the filteredCountryData on the first render
-  applyFilters();
-  return countries;
+  resetActiveFilters();
+  return createCardData(countries);
 }
 
 /**
  * Fetch detailed info for a single country by its common name.
- * Uses fullText=true to avoid partial name matches (e.g. "China" matching Hong Kong).
+ * Uses fullText=true to avoid partial name matches (e.g. "China" matching "Hong Kong").
  *
  * @param {string} name - The common name of the country (e.g. "Germany")
- * @returns {Promise<Array>} - Single-element array containing the country object
+ * @returns {Promise<object|null>} - Transformed country detail object, or null if request fails
  */
-export async function fetchCountryInfo(name) {
+async function fetchCountryInfo(name) {
+  if (!name) return null;
   const url = `${COUNTRY_INFO_URL}/${name.toLowerCase()}?fullText=true`;
-  const data = await request(url);
-  if (!data) {
+  const country = await request(url);
+  if (!country) {
     console.warn(`No data returned for country: ${name}`);
     return null;
   }
-  return data;
+  return createCountryDetail(country);
 }
 
 /**
- * Filter countries by region and store results in filteredCountryData.
+ * Filter countries by region and return the filtered result.
+ * Passing the ALL constant resets the region filter.
  *
- * @param {string} region - The region to filter by (e.g. "Europe")
+ * @param {string} region - The region to filter by (e.g. "Europe"), or ALL to show all
+ * @returns {Array} - Filtered array of country card objects
  */
-export function filterByRegion(region) {
+function filterByRegion(region) {
   activeRegion = region === ALL ? "" : region;
-  applyFilters();
+  return applyFilters();
 }
 
 /**
- * Filter countries by search text and store results in filteredCountryData.
+ * Filter countries by search text and return the filtered result.
  *
  * @param {string} search - The search string to match against country names
+ * @returns {Array} - Filtered array of country card objects
  */
-export function filterBySearch(search) {
+function filterBySearch(search) {
   activeSearch = search.trim();
-  applyFilters();
+  return applyFilters();
+}
+
+/**
+ * Apply active region and search filters together on allCountries.
+ * Filters are combined — both must match for a country to appear.
+ * Skips a filter if its value is empty (no active filter for that field).
+ *
+ * @returns {Array} - Filtered array of country card objects
+ */
+function applyFilters() {
+  let res = allCountries;
+  if (activeRegion) {
+    res = filter(res, REGION, activeRegion);
+  }
+  if (activeSearch) {
+    res = filter(res, NAME, activeSearch);
+  }
+  return res;
+}
+
+/**
+ * Reset active region and search filter state to their defaults.
+ * Called on fetchAll to ensure a clean state on re-initialization.
+ */
+function resetActiveFilters() {
+  activeRegion = "";
+  activeSearch = "";
 }
 
 /**
@@ -102,13 +114,14 @@ function createCCA3ToName(countries) {
 }
 
 /**
- * Extract and flatten the fields needed for country cards into countryCardsData.
+ * Extract and flatten the fields needed for country cards into allCountries.
  * Keeps card data lightweight — full details are fetched separately on demand.
  *
  * @param {Array} countries - Raw array of country objects from the API
+ * @returns {Array} - Flattened array of country card objects
  */
 function createCardData(countries) {
-  countryCardsData.length = 0;
+  allCountries.length = 0;
 
   const newArr = countries.map(
     ({ name, capital, population, region, flags }) => ({
@@ -116,21 +129,21 @@ function createCardData(countries) {
       capital: capital?.[0] ?? "N/A",
       population: population ?? 0,
       region: region ?? "Unknown",
-      flag: flags?.png ?? "",
-      alt: flags?.alt ?? `Flag of ${name?.common ?? "country"}`,
+      flags: flags ?? {},
     }),
   );
 
-  countryCardsData.push(...newArr);
+  allCountries.push(...newArr);
+  return newArr;
 }
 
 /**
- * Transform raw API country data into the shape used by the detail view
- * and store it in the shared countryDetail object.
+ * Transform raw API country data into the shape used by the detail view.
  *
  * @param {Array} country - Single-element array returned by the API
+ * @returns {object} - Transformed country detail object, or empty object on failure
  */
-export function createCountryDetail(country) {
+function createCountryDetail(country) {
   try {
     const {
       name,
@@ -151,9 +164,11 @@ export function createCountryDetail(country) {
       return toTitleCase(currency.name);
     });
 
+    const transformedBorders = transformBorderNames(borders ?? []);
+
     const nativeName = getNativeName(name, languages);
 
-    countryDetail = {
+    return {
       name: name?.common ?? "Unknown",
       nativeName: nativeName ?? name?.common ?? "Unknown",
       population: population ?? 0,
@@ -161,49 +176,18 @@ export function createCountryDetail(country) {
       subregion: subregion ?? "Unknown",
       capital: capital?.[0] ?? "N/A",
       tld: tld?.[0] ?? "N/A",
-      currencies: currenciesList.join(", "),
-      languages: languageList.join(", "),
-      borders: borders ?? [],
-      flags: flags ?? {},
+      currencies: currenciesList?.length ? currenciesList.join(", ") : "N/A",
+      languages: languageList?.length ? languageList.join(", ") : "N/A",
+      borders: transformedBorders,
+      flags: {
+        svg: flags?.svg ?? "",
+        alt: flags?.alt ?? `Flag of ${name?.common ?? "Unknown"}`,
+      },
     };
   } catch (err) {
     console.error("Failed to parse country detail:", err);
+    return {};
   }
-}
-
-/**
- * Generic filter — returns items where the given field includes the search text.
- * Case-insensitive.
- *
- * @param {Array} data - Array of objects to filter
- * @param {string} field - The key to filter on
- * @param {string} filteredText - The text to search for
- * @returns {Array} - Filtered array
- */
-function filter(data, field, filteredText) {
-  return data.filter((item) => {
-    const value = item?.[field];
-    if (typeof value !== "string") return false;
-    return value.toLowerCase().includes(filteredText.toLowerCase());
-  });
-}
-
-/**
- * Apply active region and search filters together on countryCardsData.
- * Filters are combined — both must match for a country to appear.
- * Skips a filter if its value is empty (no filter applied for that field).
- */
-function applyFilters() {
-  let res = countryCardsData;
-  if (activeRegion) {
-    res = filter(res, REGION, activeRegion);
-  }
-
-  if (activeSearch) {
-    res = filter(res, NAME, activeSearch);
-  }
-
-  filteredCountryData = res;
 }
 
 /**
@@ -214,7 +198,7 @@ function applyFilters() {
  */
 function toTitleCase(str) {
   return str.replace(/\w\S*/g, (match) => {
-    return match.charAt(0).toUpperCase() + match.substr(1);
+    return match.charAt(0).toUpperCase() + match.slice(1);
   });
 }
 
@@ -239,5 +223,29 @@ function getNativeName(name, languages = {}) {
       return nativeNames[lang].common;
     }
   }
-  return name?.common ?? "Unknown"; // fallback
+  return name?.common ?? "Unknown";
 }
+
+/**
+ * Resolve an array of cca3 border codes into country common names.
+ * Uses the cca3ToNameMap populated during fetchAll.
+ *
+ * @param {Array} borders - Array of cca3 codes (e.g. ["DEU", "FRA"])
+ * @returns {Array} - Array of country common names
+ */
+function transformBorderNames(borders) {
+  if (!borders) return [];
+  if (!Array.isArray(borders)) return [borders];
+  return borders.map((border) => cca3ToNameMap[border]);
+}
+
+export {
+  fetchAll,
+  fetchCountryInfo,
+  filterBySearch,
+  filterByRegion,
+  resetActiveFilters,
+  allCountries,
+  cca3ToNameMap,
+  transformBorderNames,
+};

@@ -55,6 +55,11 @@
   }
 }
 
+html {
+  /* Preserve space for scrollbar */
+  scrollbar-gutter: stable;
+}
+
 html,
 body {
   min-height: 100%;
@@ -92,7 +97,13 @@ input {
   border: none;
   outline: none;
   padding: 0;
+  background-color: transparent;
 }
+
+/* TODO: LABEL OUTLINE WHEN INSIDE INPUT GETS FOCUSED */
+/* label:has(input:focus) {
+  border: 1px solid white;  
+} */
 
 a {
   color: #000;
@@ -113,8 +124,10 @@ a {
   --grey-100: #e8e8e8;
   --grey-75: #f2f2f2;
   --grey-50: #fcfcfc;
+  --blue-980: #1a2530;
   --blue-950: #202c36;
   --blue-900: #2b3844;
+  --blue-700: #2d4a8a;
 
   /* SPACINGS */
   --spacing-100: 8px;
@@ -151,6 +164,8 @@ a {
   --bg-ui: var(--clr-white); /* covers header, cards, inputs, dropdowns */
   --text-clr: var(--grey-950);
   --input-placeholder-clr: var(--grey-400);
+  --hover-clr: var(--grey-75);
+  --active-clr: var(--grey-100);
 }
 
 /* Dark Theme */
@@ -159,14 +174,21 @@ a {
   --bg-ui: var(--blue-900); /* covers header, cards, inputs, dropdowns */
   --text-clr: var(--clr-white);
   --input-placeholder-clr: var(--clr-white);
+  --hover-clr: var(--blue-700);
+  --active-clr: var(--blue-980);
 }
 
 /* BODY */
 
 body {
+  height: 100vh;
   font-family: "Nunito Sans", sans-serif;
   background-color: var(--bg-main);
   min-width: 320px;
   color: var(--text-clr);
   line-height: var(--lh-normal);
 }
+
+/* ::-webkit-scrollbar {
+  display: none;
+} */

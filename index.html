@@ -1,5 +1,4 @@
 <!doctype html>
-<!-- TODO: js Dealing with dark-mode by changing it to dark -->
 <html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
@@ -38,139 +37,76 @@
   </head>
   <body>
     <header class="header">
-      <a href="/">
-        <h1 class="header__title text-preset-2">Where in the world?</h1>
+        <h1 class="header__title js-header-title text-preset-2"><a class="header__home-link js-header__home-link" href="/" draggable="false">Countries Explorer</a></h1>
       </a>
       <div
         class="header__theme-toggle js-header__theme-toggle text-preset-4-semibold"
         aria-label="Switch to dark mode"
+        tabindex="0"
       >
-        <!-- TODO: Require js to change the icon and text. -->
         <span class="theme-logo js-theme-logo iconfont">&#xe600;</span>
         <span class="js-theme-text">Dark Mode</span>
       </div>
     </header>
     <main class="main">
-      <!-- TODO: js Clicking country-card, the toolbar and countries will be disappeared. -->
-      <section class="toolbar">
+      <section class="toolbar js-toolbar">
         <label class="toolbar__search" for="searchInp">
+          <span class="search-icon iconfont">&#xe60d;</span>
           <input
             id="searchInp"
             type="text"
             class="js-toolbar__search-inp"
             placeholder="Search for a country..."
+            autocomplete="off"
           />
-          <span class="search-icon iconfont">&#xe60d;</span>
         </label>
-        <div class="toolbar__filter text-preset-5-regular">
+        <div
+          class="toolbar__filter js-toolbar__filter text-preset-5-regular"
+          tabindex="0"
+        >
           <div class="toolbar__filter-toggle js-toolbar__filter-toggle">
-            Filter by Region
+            <span class="toolbar__filter-text js-toolbar__filter-text"
+              >Filter by Region</span
+            >
             <span class="toolbar__filter-icon iconfont">&#xe629;</span>
           </div>
           <ul class="toolbar__filter-options js-toolbar__filter-options hidden">
-            <li class="toolbar__filter-item">All</li>
-            <li class="toolbar__filter-item">Africa</li>
-            <li class="toolbar__filter-item">America</li>
-            <li class="toolbar__filter-item">Asia</li>
-            <li class="toolbar__filter-item">Europe</li>
-            <li class="toolbar__filter-item">Oceania</li>
+            <li
+              class="toolbar__filter-item js-toolbar__filter-item"
+              tabindex="0"
+              data-region="Filter by Region"
+            >
+              All
+            </li>
+            <li class="toolbar__filter-item js-toolbar__filter-item" tabindex="0" data-region="Africa">
+              Africa
+            </li>
+            <li
+              class="toolbar__filter-item js-toolbar__filter-item"
+              tabindex="0"
+              data-region="Americas"
+            >
+              Americas
+            </li>
+            <li class="toolbar__filter-item js-toolbar__filter-item" tabindex="0" data-region="Asia">
+              Asia
+            </li>
+            <li class="toolbar__filter-item js-toolbar__filter-item" tabindex="0" data-region="Europe">
+              Europe
+            </li>
+            <li class="toolbar__filter-item js-toolbar__filter-item" tabindex="0" data-region="Oceania">
+              Oceania
+            </li>
           </ul>
         </div>
       </section>
-      <section class="countries">
+      <section class="countries js-countries">
         <!-- country cards -->
       </section>
-      <!-- TODO: JS Show country-detail -->
-      <!-- <section class="country-detail">
-        <a class="back-link" href="/"
-          ><span class="iconfont">&#xe671; </span>Back</a
-        >
-        <article>
-          <section class="country-image">
-            <img src="https://flagcdn.com/be.svg" alt="Belgium" />
-          </section>
-          <section class="country-description">
-            <h2 class="text-preset-1">Belgium</h2>
-            <div class="country-detail__info text-preset-5-light">
-              <ul>
-                <li>
-                  <strong class="text-preset-5-semibold">Native Name: </strong
-                  ><span>België</span>
-                </li>
-                <li>
-                  <strong class="text-preset-5-semibold">Population: </strong
-                  ><span>11,319,511 </span>
-                </li>
-                <li>
-                  <strong class="text-preset-5-semibold">Region: </strong
-                  ><span>Europe</span>
-                </li>
-                <li>
-                  <strong class="text-preset-5-semibold">Sub Region: </strong
-                  ><span>Western Europe</span>
-                </li>
-                <li>
-                  <strong class="text-preset-5-semibold">Capital: </strong
-                  ><span>Brussels </span>
-                </li>
-              </ul>
-              <ul>
-                <li>
-                  <strong class="text-preset-5-semibold"
-                    >Top Level Domain: </strong
-                  ><span>.be</span>
-                </li>
-                <li>
-                  <strong class="text-preset-5-semibold">Currencies: </strong
-                  ><span>Euro </span>
-                </li>
-                <li>
-                  <strong class="text-preset-5-semibold">Languages: </strong
-                  ><span>Dutch, French, German</span>
-                </li>
-              </ul>
-            </div>
-            <div class="country-detail__borders">
-              <strong class="text-preset-5-semibold">Border Countries: </strong>
-              <ul class="text-preset-5-light">
-                <li>France</li>
-                <li>Germany</li>
-                <li>Netherlands</li>
-              </ul>
-            </div>
-          </section>
-        </article>
-      </section> -->
+      <section class="country-detail js-country-detail">
+        <!-- country detail -->
+      </section>
     </main>
-    <script src="./js/main.js"></script>
-    <script type="module">
-      import { renderCountryCards } from "./js/view/view.js";
-      import { COUNTRY_URL } from "./js/data/constants.js";
-      import {
-        fetchAll,
-        fetchCountryInfo,
-        filterByRegion,
-        filterBySearch,
-        countryCardsData,
-        cca3ToNameMap,
-        filteredCountryData,
-        createCountryDetail,
-        countryDetail,
-      } from "./js/data/data.js";
-
-      // fetchAll(COUNTRY_URL).then(() => {
-      //   filterByRegion("ASIA");
-
-      //   filterBySearch("C");
-      //   console.log(filteredCountryData);
-      //   // console.log(cca3ToNameMap);
-      // });
-
-      // fetchCountryInfo("malaysia").then((d) => {
-      //   createCountryDetail(d);
-      //   console.log(countryDetail);
-      // });
-      renderCountryCards();
-    </script>
+    <script type="module" src="./js/main.js"></script>
   </body>
 </html>

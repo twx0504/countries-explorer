@@ -1,7 +1,15 @@
+// THEME
+const LIGHT_THEME = "light";
+const DARK_THEME = "dark";
+const LIGHT_THEME_TEXT = "Dark Mode";
+const LIGHT_THEME_LOGO = "&#xe600;";
+const DARK_THEME_TEXT = "Light Mode";
+const DARK_THEME_LOGO = "&#xe6a2;";
+
 // REGION
-const ALL = "ALL";
+const ALL = "Filter by Region";
 const ASIA = "Asia";
-const AMERICA = "America";
+const AMERICA = "Americas";
 const AFRICA = "Africa";
 const EUROPE = "Europe";
 const OCEANIA = "Oceania";
@@ -17,6 +25,12 @@ const COUNTRY_URL =
 const COUNTRY_INFO_URL = "https://restcountries.com/v3.1/name";
 
 export {
+  LIGHT_THEME,
+  DARK_THEME,
+  LIGHT_THEME_TEXT,
+  LIGHT_THEME_LOGO,
+  DARK_THEME_TEXT,
+  DARK_THEME_LOGO,
   ALL,
   ASIA,
   AMERICA,

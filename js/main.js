@@ -1,49 +1,101 @@
-const html = document.documentElement;
-const themeToggle = document.querySelector(".js-header__theme-toggle");
-const filter = document.querySelector(".js-toolbar__filter-toggle");
-const filterOptions = document.querySelector(".js-toolbar__filter-options");
-const searchBar = document.querySelector(".js-toolbar__search-inp");
-const logo = document.querySelector(".js-theme-logo");
-const themeText = document.querySelector(".js-theme-text");
-const LIGHT_THEME = "light";
-const DARK_THEME = "dark";
+import { debounce } from "./utils/debounce.js";
+import { filterByRegion, filterBySearch } from "./data/data.js";
+import {
+  init,
+  renderCountryCards,
+  showCountryDetail,
+  hideCountryDetail,
+  toggleFilterOptions,
+  updateFilterOptions,
+  toggleTheme,
+  resetHomeView,
+} from "./view/view.js";
 
-// Theme
-themeToggle.addEventListener("click", () => {
-  let theme = html.getAttribute("data-theme");
-  if (theme === LIGHT_THEME) {
-    html.setAttribute("data-theme", DARK_THEME);
-    logo.innerHTML = "&#xe6a2;";
-    themeText.textContent = "Light Mode";
-  } else {
-    html.setAttribute("data-theme", LIGHT_THEME);
-    logo.innerHTML = "&#xe600;";
-    themeText.textContent = "Dark Mode";
-  }
-});
+// DOM References
+const searchBar = document.querySelector(".js-toolbar__search-inp");
+const countries = document.querySelector(".js-countries");
+
+init();
 
 // Filter
-// TODO: 1. Figure out mouseenter, mouseleave and the options list disappear issue.
-filter.addEventListener("click", (e) => {
-  if (filterOptions) {
-    filterOptions.classList.toggle("hidden");
-  }
-});
 
-// Filter Options
-// TODO: 1. get the region text, 2. filter out the data to be displayed, 3. render
-if (filterOptions) {
-  filterOptions.addEventListener("click", (e) => {
-    const target = e.target.closest("li");
-    if (target.tagName !== "LI") return;
-    // Filter data to be display in countries.
-    // Render
-  });
+/**
+ * Filters country cards by the selected region and updates the filter UI.
+ * @param {HTMLElement} target - The clicked filter item element.
+ */
+function handleFilterOptions(target) {
+  const currentRegion = target.dataset.region;
+  const filteredData = filterByRegion(currentRegion);
+  updateFilterOptions(currentRegion, filteredData);
+  toggleFilterOptions();
 }
 
 // Search
-// TODO: 1. get the value from search bar. 2. filter out the data to be displayed, 3. render
-searchBar.addEventListener("input", (e) => {
-  const val = e.target.value;
-  console.log(val);
+
+const debouncedHandleSearch = debounce(handleSearch);
+
+searchBar.addEventListener("input", debouncedHandleSearch);
+
+/**
+ * Handles search input and renders filtered country cards.
+ * @param {InputEvent} e - The input event from the search bar.
+ */
+function handleSearch(e) {
+  const searchText = e.target.value.trim();
+  const filteredData = filterBySearch(searchText);
+  renderCountryCards(filteredData);
+}
+
+// Events — delegate click and keyboard (Enter) to a shared handler
+
+document.addEventListener("click", handleActions);
+
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Enter") return;
+  handleActions(e);
 });
+
+/**
+ * Handles delegated click and keyboard (Enter) events across the app.
+ * Routes actions based on the event target.
+ * @param {MouseEvent|KeyboardEvent} e - The triggering event.
+ */
+function handleActions(e) {
+  const target = e.target;
+
+  // Navigate home
+  if (target.classList.contains("js-header__home-link")) {
+    e.preventDefault();
+    return resetHomeView();
+  }
+
+  // Toggle light/dark theme
+  if (target.closest(".js-header__theme-toggle")) {
+    return toggleTheme();
+  }
+
+  // Filter dropdown — item click filters, anything else toggles open/close
+  if (target.closest(".js-toolbar__filter")) {
+    if (target.classList.contains("js-toolbar__filter-item")) {
+      return handleFilterOptions(target);
+    }
+    return toggleFilterOptions();
+  }
+
+  // Go back from country detail to home
+  if (target.classList.contains("js-back-link")) {
+    e.preventDefault();
+    return hideCountryDetail();
+  }
+
+  // Show a bordering country from the detail view
+  if (target.classList.contains("js-border")) {
+    return showCountryDetail(target);
+  }
+
+  // Show country detail when clicking a country card
+  const article = target.closest("article");
+  if (countries.contains(article)) {
+    return showCountryDetail(article);
+  }
+}
