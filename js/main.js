@@ -18,6 +18,7 @@ import {
   resetHomeView,
   resetSearchBar,
   applyTheme,
+  announceResultCount,
 } from "./view/view.js";
 import { CCA3_TO_NAME, REST_COUNTRIES, THEME } from "./data/constants.js";
 
@@ -28,6 +29,9 @@ const countries = document.querySelector(".js-countries");
 let countriesCache = [];
 let activeRegion = "";
 let activeSearch = "";
+let activeFilterItem = document.querySelector(
+  ".js-toolbar__filter-item[data-region='']",
+);
 
 init();
 
@@ -48,6 +52,7 @@ async function init() {
   if (countriesCache && cca3ToNameCache) {
     renderCountryCards(countriesCache);
     setCCA3ToNameMap(cca3ToNameCache);
+    announceResultCount(countriesCache);
     return;
   }
 
@@ -61,6 +66,7 @@ async function init() {
   saveToStorage(REST_COUNTRIES, cardData);
   saveToStorage(CCA3_TO_NAME, cca3ToName);
   renderCountryCards(cardData);
+  announceResultCount(cardData);
 }
 
 /**
@@ -79,6 +85,7 @@ function resetActiveFilters() {
  */
 function handleFilterOptions(target) {
   const selectedRegion = target.dataset.region;
+
   activeRegion = selectedRegion;
 
   if (activeRegion === "") {
@@ -91,8 +98,13 @@ function handleFilterOptions(target) {
     search: activeSearch,
   });
 
+  activeFilterItem.setAttribute("aria-selected", "false");
+  target.setAttribute("aria-selected", "true");
+  activeFilterItem = target;
+
   updateFilterOptions(activeRegion, filteredData);
   toggleFilterOptions();
+  announceResultCount(filteredData);
 }
 
 // Search
@@ -120,8 +132,21 @@ function handleSearch(e) {
 document.addEventListener("click", handleActions);
 
 document.addEventListener("keydown", (e) => {
-  if (e.key !== "Enter") return;
-  handleActions(e);
+  if (e.target.tagName === "BUTTON") return;
+
+  const key = e.key;
+
+  switch (key) {
+    case "Enter": {
+      return handleActions(e);
+    }
+    case "Escape": {
+      const backLink = document.querySelector(".js-back-link");
+      if (backLink === null) return;
+      e.preventDefault();
+      return backLink.click();
+    }
+  }
 });
 
 /**
@@ -131,7 +156,6 @@ document.addEventListener("keydown", (e) => {
  */
 function handleActions(e) {
   const target = e.target;
-
   // Navigate home
   if (target.classList.contains("js-header__home-link")) {
     e.preventDefault();
@@ -144,6 +168,7 @@ function handleActions(e) {
   }
 
   // Filter dropdown — item click filters, anything else toggles open/close
+
   if (target.closest(".js-toolbar__filter")) {
     if (target.classList.contains("js-toolbar__filter-item")) {
       return handleFilterOptions(target);
@@ -153,7 +178,6 @@ function handleActions(e) {
 
   // Go back from country detail to home
   if (target.classList.contains("js-back-link")) {
-    console.log("click");
     e.preventDefault();
     return hideCountryDetail();
   }
@@ -164,8 +188,13 @@ function handleActions(e) {
   }
 
   // Show country detail when clicking a country card
-  const article = target.closest("article");
-  if (countries.contains(article)) {
-    return showCountryDetail(article);
+  
+  // const article = target.closest(".country-card");
+  // if (countries.contains(article)) {
+  //   return showCountryDetail(article);
+  // }
+  const countryCard = target.closest(".country-card");
+  if (countryCard) {
+    return showCountryDetail(countryCard);
   }
 }

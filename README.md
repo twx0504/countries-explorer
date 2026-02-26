@@ -13,4 +13,5 @@ TODO:
 4. Fix Nepal Flag image background transparent issue -> Set as #fff in dark theme.
 5. Fix clicking on Countries Explorer header and loading failed issue
     - It is due to resetHomeView inner fetchAll and renderCountries using countries instead of cardData.
-6. TODO: Show countries in alphabetical order.
+6. Show countries in alphabetical order.
+7. TODO: Keydown event: ESC to back to home view.

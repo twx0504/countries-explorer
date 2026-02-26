@@ -1,5 +1,4 @@
 import {
-  ALL,
   REGION,
   NAME,
   COUNTRY_INFO_URL,
@@ -43,32 +42,6 @@ async function fetchCountryInfo(name) {
   }
   return createCountryDetail(country);
 }
-
-// /**
-//  * Filter countries by region and return the filtered result.
-//  * Passing the ALL constant resets the region filter.
-//  *
-//  * @param {string} region - The region to filter by (e.g. "Europe"), or ALL to show all
-//  * @returns {Array} - Filtered array of country card objects
-//  */
-// function filterByRegion(data, region) {
-//   const active = region === ALL ? "" : region;
-//   return active ? filter(data, REGION, active) : data;
-
-//   return applyFilters(data);
-// }
-
-// /**
-//  * Filter countries by search text and return the filtered result.
-//  *
-//  * @param {string} search - The search string to match against country names
-//  * @returns {Array} - Filtered array of country card objects
-//  */
-// function filterBySearch(data, search) {
-//   const active = search.trim();
-//   return active ? filter(data, NAME, active) : data;
-//   // return applyFilters(data);
-// }
 
 /**
  * Apply active region and search filters together on allCountries.

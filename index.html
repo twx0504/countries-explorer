@@ -33,25 +33,32 @@
       crossorigin
     />
     <link rel="stylesheet" href="./css/main.css" />
-    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
   </head>
   <body>
     <header class="header">
-        <h1 class="header__title js-header-title text-preset-2"><a class="header__home-link js-header__home-link" href="/" draggable="false">Countries Explorer</a></h1>
-      </a>
-      <div
+      <h1 class="header__title js-header-title text-preset-2">
+        <a
+          class="header__home-link js-header__home-link"
+          href="/"
+          draggable="false"
+          >Countries Explorer</a
+        >
+      </h1>
+
+      <button
         class="header__theme-toggle js-header__theme-toggle text-preset-4-semibold"
         aria-label="Switch to dark mode"
-        tabindex="0"
       >
         <span class="theme-logo js-theme-logo iconfont">&#xe600;</span>
         <span class="js-theme-text">Dark Mode</span>
-      </div>
+      </button>
     </header>
     <main class="main">
-      <section class="toolbar js-toolbar">
+      <section class="toolbar js-toolbar" aria-label="Search and filter">
+        <!-- search bar -->
         <label class="toolbar__search" for="searchInp">
-          <span class="search-icon iconfont">&#xe60d;</span>
+          <span class="search-icon iconfont" aria-hidden="true">&#xe60d;</span>
           <input
             id="searchInp"
             type="text"
@@ -60,50 +67,97 @@
             autocomplete="off"
           />
         </label>
-        <div
-          class="toolbar__filter js-toolbar__filter text-preset-5-regular"
-          tabindex="0"
-        >
-          <div class="toolbar__filter-toggle js-toolbar__filter-toggle">
+        <!-- filter options -->
+        <div class="toolbar__filter js-toolbar__filter text-preset-5-regular">
+          <button
+            class="toolbar__filter-toggle js-toolbar__filter-toggle"
+            aria-expanded="false"
+            aria-controls="toolbar__filter-options"
+            aria-haspopup="listbox"
+          >
             <span class="toolbar__filter-text js-toolbar__filter-text"
               >Filter by Region</span
             >
-            <span class="toolbar__filter-icon iconfont">&#xe629;</span>
-          </div>
-          <ul class="toolbar__filter-options js-toolbar__filter-options hidden">
+            <span class="toolbar__filter-icon iconfont" aria-hidden="true"
+              >&#xe629;</span
+            >
+          </button>
+          <ul
+            class="toolbar__filter-options js-toolbar__filter-options hidden"
+            id="toolbar__filter-options"
+            data-open="false"
+            role="listbox"
+            aria-label="Filter by Region"
+          >
             <li
               class="toolbar__filter-item js-toolbar__filter-item"
               tabindex="0"
               data-region=""
+              role="option"
+              aria-selected="true"
             >
               All
             </li>
-            <li class="toolbar__filter-item js-toolbar__filter-item" tabindex="0" data-region="Africa">
+            <li
+              class="toolbar__filter-item js-toolbar__filter-item"
+              tabindex="0"
+              data-region="Africa"
+              role="option"
+              aria-selected="false"
+            >
               Africa
             </li>
             <li
               class="toolbar__filter-item js-toolbar__filter-item"
               tabindex="0"
               data-region="Americas"
+              role="option"
+              aria-selected="false"
             >
               Americas
             </li>
-            <li class="toolbar__filter-item js-toolbar__filter-item" tabindex="0" data-region="Asia">
+            <li
+              class="toolbar__filter-item js-toolbar__filter-item"
+              tabindex="0"
+              data-region="Asia"
+              role="option"
+              aria-selected="false"
+            >
               Asia
             </li>
-            <li class="toolbar__filter-item js-toolbar__filter-item" tabindex="0" data-region="Europe">
+            <li
+              class="toolbar__filter-item js-toolbar__filter-item"
+              tabindex="0"
+              data-region="Europe"
+              role="option"
+              aria-selected="false"
+            >
               Europe
             </li>
-            <li class="toolbar__filter-item js-toolbar__filter-item" tabindex="0" data-region="Oceania">
+            <li
+              class="toolbar__filter-item js-toolbar__filter-item"
+              tabindex="0"
+              data-region="Oceania"
+              role="option"
+              aria-selected="false"
+            >
               Oceania
             </li>
           </ul>
         </div>
       </section>
-      <section class="countries js-countries">
+      <p class="sr-only result-count" aria-live="polite" id="results-count"></p>
+      <section
+        class="countries js-countries"
+        aria-label="Countries"
+      >
         <!-- country cards -->
       </section>
-      <section class="country-detail js-country-detail">
+      <section
+        class="country-detail js-country-detail"
+        aria-label="Country detail"
+        aria-live="polite"
+      >
         <!-- country detail -->
       </section>
     </main>

@@ -11,14 +11,23 @@ import {
   THEME,
 } from "../data/constants.js";
 
+// Root
 const root = document.documentElement;
-const countries = document.querySelector(".js-countries");
+
+// Header
+const logo = document.querySelector(".js-theme-logo");
+const themeToggle = document.querySelector(".js-header__theme-toggle");
+const themeText = document.querySelector(".js-theme-text");
+
+// Toolbar
 const toolbar = document.querySelector(".js-toolbar");
 const searchBar = document.querySelector(".js-toolbar__search-inp");
+const filterToggle = document.querySelector(".js-toolbar__filter-toggle");
 const filterOptions = document.querySelector(".js-toolbar__filter-options");
 const toolbarFilterText = document.querySelector(".js-toolbar__filter-text");
-const logo = document.querySelector(".js-theme-logo");
-const themeText = document.querySelector(".js-theme-text");
+
+// Main
+const countries = document.querySelector(".js-countries")
 const countryDetail = document.querySelector(".js-country-detail");
 
 /**
@@ -44,7 +53,7 @@ function renderCountryCards(data) {
   let countrysHTML = data
     .map(({ name, population, region, capital, flags }) => {
       return `
-      <article class="country-card" data-name="${name}" data-region="${region}" tabindex="0" role="button">
+      <div class="country-card" data-name="${name}" data-region="${region}" tabindex="0" role="button">
         <div class="country-card__image-wrapper">
           <img
             draggable="false"
@@ -77,7 +86,7 @@ function renderCountryCards(data) {
             </li>
           </ul>
         </div>
-      </article>`;
+      </div>`;
     })
     .join("");
   countries.innerHTML = countrysHTML;
@@ -109,61 +118,62 @@ async function renderCountryDetail(countryName) {
   } = country;
 
   const countryDetailHTML = `
-    <a class="back-link js-back-link" href="/" role="button" draggable="false">
-      <span class="iconfont">&#xe671; </span>Back</a>
-      <article>
-        <section class="country-image">
-          <img src="${flags.svg}" alt="${flags.alt}" draggable="false" />
-        </section>
-        <section class="country-description">
-          <h2 class="text-preset-1">${name}</h2>
-          <div class="country-detail__info text-preset-5-light">
-            <ul>
-              <li>
-                <strong class="text-preset-5-semibold">Native Name: </strong
-                ><span>${nativeName}</span>
-              </li>
-              <li>
-                <strong class="text-preset-5-semibold">Population: </strong
-                ><span>${population} </span>
-              </li>
-              <li>
-                <strong class="text-preset-5-semibold">Region: </strong
-                ><span>${region}</span>
-              </li>
-              <li>
-                <strong class="text-preset-5-semibold">Sub Region: </strong
-                ><span>${subregion}</span>
-              </li>
-              <li>
-                <strong class="text-preset-5-semibold">Capital: </strong
-                ><span>${capital} </span>
-              </li>
-            </ul>
-            <ul>
-              <li>
-                <strong class="text-preset-5-semibold"
-                  >Top Level Domain: </strong
-                ><span>${tld}</span>
-              </li>
-              <li>
-                <strong class="text-preset-5-semibold">Currencies: </strong
-                ><span>${currencies} </span>
-              </li>
-              <li>
-                <strong class="text-preset-5-semibold">Languages: </strong
-                ><span>${languages}</span>
-              </li>
-            </ul>
-          </div>
-          <div class="country-detail__borders">
-            <strong class="text-preset-5-semibold">Border Countries: </strong>
-            <ul class="text-preset-5-light">
-              ${renderBorders(borders)}
-            </ul>
-          </div>
-        </section>
-      </article>
+    <button class="back-link js-back-link">
+      <span class="iconfont" aria-hidden="true">&#xe671;</span> Back
+    </button>
+    <article>
+      <section class="country-image">
+        <img src="${flags.svg}" alt="${flags.alt}" draggable="false" />
+      </section>
+      <section class="country-description">
+        <h2 class="text-preset-1">${name}</h2>
+        <div class="country-detail__info text-preset-5-light">
+          <ul>
+            <li>
+              <strong class="text-preset-5-semibold">Native Name: </strong
+              ><span>${nativeName}</span>
+            </li>
+            <li>
+              <strong class="text-preset-5-semibold">Population: </strong
+              ><span>${population} </span>
+            </li>
+            <li>
+              <strong class="text-preset-5-semibold">Region: </strong
+              ><span>${region}</span>
+            </li>
+            <li>
+              <strong class="text-preset-5-semibold">Sub Region: </strong
+              ><span>${subregion}</span>
+            </li>
+            <li>
+              <strong class="text-preset-5-semibold">Capital: </strong
+              ><span>${capital} </span>
+            </li>
+          </ul>
+          <ul>
+            <li>
+              <strong class="text-preset-5-semibold"
+                >Top Level Domain: </strong
+              ><span>${tld}</span>
+            </li>
+            <li>
+              <strong class="text-preset-5-semibold">Currencies: </strong
+              ><span>${currencies} </span>
+            </li>
+            <li>
+              <strong class="text-preset-5-semibold">Languages: </strong
+              ><span>${languages}</span>
+            </li>
+          </ul>
+        </div>
+        <div class="country-detail__borders">
+          <strong class="text-preset-5-semibold">Border Countries: </strong>
+          <ul class="text-preset-5-light">
+            ${renderBorders(borders)}
+          </ul>
+        </div>
+      </section>
+    </article>
     `;
 
   countryDetail.innerHTML = countryDetailHTML;
@@ -178,12 +188,15 @@ async function renderCountryDetail(countryName) {
  */
 function renderBorders(borders) {
   if (!Array.isArray(borders) || borders.length === 0) {
-    console.warn("Argument: borders is not an array or empty.");
     return `<li class="no-border">None</li>`;
   }
   return borders
     .map((border) => {
-      return `<li class="border js-border" tabindex="0" role="button" data-name="${border}">${border}</li>`;
+      return `<li class="border">
+        <button class="js-border" data-name="${border}">
+          ${border}
+        </button>
+      </li>`;
     })
     .join("");
 }
@@ -231,9 +244,14 @@ function changeFilterText(text) {
  * Toggle the filter options dropdown open or closed.
  */
 function toggleFilterOptions() {
-  if (filterOptions) {
-    filterOptions.classList.toggle("hidden");
-  }
+  if (!filterOptions) return;
+  const isOpen = filterOptions.dataset.open === "true";
+  const newState = !isOpen;
+
+  filterToggle.setAttribute("aria-expanded", newState);
+  filterOptions.setAttribute("data-open", newState);
+
+  filterOptions.classList.toggle("hidden");
 }
 
 /**
@@ -265,9 +283,10 @@ function getNextTheme(currentTheme) {
 function applyTheme(nextTheme) {
   root.setAttribute("data-theme", nextTheme);
   const isLight = nextTheme === LIGHT_THEME;
-
+  const mode = isLight ? LIGHT_THEME_TEXT : DARK_THEME_TEXT;
   logo.innerHTML = isLight ? LIGHT_THEME_LOGO : DARK_THEME_LOGO;
-  themeText.textContent = isLight ? LIGHT_THEME_TEXT : DARK_THEME_TEXT;
+  themeText.textContent = mode;
+  themeToggle.setAttribute("aria-label", `Switch to ${mode.toLowerCase()}`);
 }
 
 /**
@@ -310,6 +329,21 @@ async function resetHomeView(data) {
   renderCountryCards(data);
 }
 
+/**
+ * Announce the number of visible countries to screen readers.
+ * Updates the sr-only live region with the current result count.
+ *
+ * @param {Array} data - The currently displayed array of country objects
+ */
+function announceResultCount(data) {
+  const resultCountContainer = document.querySelector("#results-count");
+  if (!Array.isArray(data)) {
+    resultCountContainer.textContent = `0 countries found`;
+    return;
+  }
+  resultCountContainer.textContent = `${data.length} countries found`;
+}
+
 export {
   renderCountryCards,
   renderCountryDetail,
@@ -322,4 +356,5 @@ export {
   resetHomeView,
   resetSearchBar,
   applyTheme,
+  announceResultCount,
 };
