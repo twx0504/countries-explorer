@@ -4,7 +4,7 @@
   font-family: "Nunito Sans";
   font-style: normal;
   font-weight: 300;
-  src: url("../../assets/fonts/nunito-sans-v19-latin-300.woff2") format("woff2");
+  src: url("../assets/fonts/nunito-sans-v19-latin-300.woff2") format("woff2");
 }
 
 @font-face {
@@ -12,7 +12,7 @@
   font-family: "Nunito Sans";
   font-style: normal;
   font-weight: 400;
-  src: url("../../assets/fonts/nunito-sans-v19-latin-regular.woff2")
+  src: url("../assets/fonts/nunito-sans-v19-latin-regular.woff2")
     format("woff2");
 }
 
@@ -21,7 +21,7 @@
   font-family: "Nunito Sans";
   font-style: normal;
   font-weight: 600;
-  src: url("../../assets/fonts/nunito-sans-v19-latin-600.woff2") format("woff2");
+  src: url("../assets/fonts/nunito-sans-v19-latin-600.woff2") format("woff2");
 }
 
 @font-face {
@@ -29,7 +29,7 @@
   font-family: "Nunito Sans";
   font-style: normal;
   font-weight: 800;
-  src: url("../../assets/fonts/nunito-sans-v19-latin-800.woff2") format("woff2");
+  src: url("../assets/fonts/nunito-sans-v19-latin-800.woff2") format("woff2");
 }
 
 @font-face {
