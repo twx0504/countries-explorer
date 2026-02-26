@@ -1,4 +1,5 @@
-import { fetchAll, fetchCountryInfo } from "../data/data.js";
+import { fetchCountryInfo } from "../data/data.js";
+import { saveToStorage } from "../utils/storage.js";
 import {
   ALL,
   DARK_THEME,
@@ -7,6 +8,7 @@ import {
   LIGHT_THEME_LOGO,
   DARK_THEME_TEXT,
   DARK_THEME_LOGO,
+  THEME,
 } from "../data/constants.js";
 
 const root = document.documentElement;
@@ -187,16 +189,6 @@ function renderBorders(borders) {
 }
 
 /**
- * Initialize the app by fetching all countries and rendering the country cards.
- *
- * @returns {Promise<void>}
- */
-async function init() {
-  const data = await fetchAll();
-  renderCountryCards(data);
-}
-
-/**
  * Show the country detail view for the given target element.
  * Hides the toolbar and country grid while the detail is visible.
  *
@@ -229,6 +221,9 @@ function hideCountryDetail() {
  * @param {string} text - The text to display (e.g. "Europe" or "Filter by Region")
  */
 function changeFilterText(text) {
+  if (text === "") {
+    text = ALL;
+  }
   toolbarFilterText.textContent = text;
 }
 
@@ -281,6 +276,7 @@ function applyTheme(nextTheme) {
 function toggleTheme() {
   let currentTheme = root.getAttribute("data-theme");
   const nextTheme = getNextTheme(currentTheme);
+  saveToStorage(THEME, nextTheme);
   applyTheme(nextTheme);
 }
 
@@ -307,16 +303,14 @@ function resetSearchBar(searchBar) {
  *
  * @returns {Promise<void>}
  */
-async function resetHomeView() {
-  const allCountries = await fetchAll();
+async function resetHomeView(data) {
   hideCountryDetail();
   resetSearchBar(searchBar);
   resetFilterOptions();
-  renderCountryCards(allCountries);
+  renderCountryCards(data);
 }
 
 export {
-  init,
   renderCountryCards,
   renderCountryDetail,
   showCountryDetail,
@@ -326,4 +320,6 @@ export {
   toggleTheme,
   updateFilterOptions,
   resetHomeView,
+  resetSearchBar,
+  applyTheme,
 };

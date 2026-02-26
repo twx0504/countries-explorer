@@ -8,6 +8,7 @@
  * @returns {Array} - Filtered array
  */
 export function filter(data, field, filteredText) {
+  if (!Array.isArray(data)) return [];
   return data.filter((item) => {
     const value = item?.[field];
     if (typeof value !== "string") return false;

@@ -9,11 +9,7 @@ import {
 import { request } from "../utils/request.js";
 import { filter } from "../utils/filter.js";
 
-const allCountries = [];
-const cca3ToNameMap = {};
-
-let activeRegion = "";
-let activeSearch = "";
+let cca3ToNameMap = {};
 
 /**
  * Fetch all countries and populate shared data structures.
@@ -25,9 +21,9 @@ let activeSearch = "";
 async function fetchAll() {
   const countries = await request(COUNTRY_URL);
   if (!countries) return [];
-  createCCA3ToName(countries);
-  resetActiveFilters();
-  return createCardData(countries);
+  const cca3ToName = createCCA3ToName(countries);
+  // return createCardData(countries);
+  return { countries, cca3ToName };
 }
 
 /**
@@ -48,28 +44,31 @@ async function fetchCountryInfo(name) {
   return createCountryDetail(country);
 }
 
-/**
- * Filter countries by region and return the filtered result.
- * Passing the ALL constant resets the region filter.
- *
- * @param {string} region - The region to filter by (e.g. "Europe"), or ALL to show all
- * @returns {Array} - Filtered array of country card objects
- */
-function filterByRegion(region) {
-  activeRegion = region === ALL ? "" : region;
-  return applyFilters();
-}
+// /**
+//  * Filter countries by region and return the filtered result.
+//  * Passing the ALL constant resets the region filter.
+//  *
+//  * @param {string} region - The region to filter by (e.g. "Europe"), or ALL to show all
+//  * @returns {Array} - Filtered array of country card objects
+//  */
+// function filterByRegion(data, region) {
+//   const active = region === ALL ? "" : region;
+//   return active ? filter(data, REGION, active) : data;
 
-/**
- * Filter countries by search text and return the filtered result.
- *
- * @param {string} search - The search string to match against country names
- * @returns {Array} - Filtered array of country card objects
- */
-function filterBySearch(search) {
-  activeSearch = search.trim();
-  return applyFilters();
-}
+//   return applyFilters(data);
+// }
+
+// /**
+//  * Filter countries by search text and return the filtered result.
+//  *
+//  * @param {string} search - The search string to match against country names
+//  * @returns {Array} - Filtered array of country card objects
+//  */
+// function filterBySearch(data, search) {
+//   const active = search.trim();
+//   return active ? filter(data, NAME, active) : data;
+//   // return applyFilters(data);
+// }
 
 /**
  * Apply active region and search filters together on allCountries.
@@ -78,24 +77,17 @@ function filterBySearch(search) {
  *
  * @returns {Array} - Filtered array of country card objects
  */
-function applyFilters() {
-  let res = allCountries;
-  if (activeRegion) {
-    res = filter(res, REGION, activeRegion);
+function applyFilters(data, { region, search }) {
+  if (!Array.isArray(data)) return [];
+  let filteredResult = data;
+  if (region) {
+    filteredResult = filter(filteredResult, REGION, region);
   }
-  if (activeSearch) {
-    res = filter(res, NAME, activeSearch);
+  if (search) {
+    filteredResult = filter(filteredResult, NAME, search);
   }
-  return res;
-}
 
-/**
- * Reset active region and search filter state to their defaults.
- * Called on fetchAll to ensure a clean state on re-initialization.
- */
-function resetActiveFilters() {
-  activeRegion = "";
-  activeSearch = "";
+  return filteredResult;
 }
 
 /**
@@ -105,12 +97,15 @@ function resetActiveFilters() {
  * @param {Array} countries - Raw array of country objects from the API
  */
 function createCCA3ToName(countries) {
+  const cca3ToNameMap = {};
+
   countries.forEach(({ name, cca3 }) => {
     const commonName = name?.common;
     if (cca3 && commonName) {
       cca3ToNameMap[cca3] = commonName;
     }
   });
+  return cca3ToNameMap;
 }
 
 /**
@@ -121,7 +116,7 @@ function createCCA3ToName(countries) {
  * @returns {Array} - Flattened array of country card objects
  */
 function createCardData(countries) {
-  allCountries.length = 0;
+  // allCountries.length = 0;
 
   const newArr = countries.map(
     ({ name, capital, population, region, flags }) => ({
@@ -133,7 +128,6 @@ function createCardData(countries) {
     }),
   );
 
-  allCountries.push(...newArr);
   return newArr;
 }
 
@@ -164,7 +158,10 @@ function createCountryDetail(country) {
       return toTitleCase(currency.name);
     });
 
-    const transformedBorders = transformBorderNames(borders ?? []);
+    const transformedBorders = transformBorderNames(
+      borders ?? [],
+      cca3ToNameMap,
+    );
 
     const nativeName = getNativeName(name, languages);
 
@@ -233,19 +230,38 @@ function getNativeName(name, languages = {}) {
  * @param {Array} borders - Array of cca3 codes (e.g. ["DEU", "FRA"])
  * @returns {Array} - Array of country common names
  */
-function transformBorderNames(borders) {
+function transformBorderNames(borders, cca3ToNameMap) {
   if (!borders) return [];
   if (!Array.isArray(borders)) return [borders];
   return borders.map((border) => cca3ToNameMap[border]);
 }
 
+/**
+ * Set the module-level cca3ToNameMap used by transformBorderNames.
+ * Should be called once after fetchAll resolves.
+ *
+ * @param {object} map - An object mapping cca3 codes to country common names
+ */
+function setCCA3ToNameMap(map) {
+  cca3ToNameMap = map;
+}
+
+/**
+ * Return a new array of countries sorted alphabetically by name.
+ *
+ * @param {Array} data - Array of country card objects
+ * @returns {Array} - New sorted array
+ */
+function sortInAlphabeticalOrder(data) {
+  return data.toSorted((a, b) => a.name.localeCompare(b.name));
+}
+
 export {
   fetchAll,
   fetchCountryInfo,
-  filterBySearch,
-  filterByRegion,
-  resetActiveFilters,
-  allCountries,
-  cca3ToNameMap,
+  createCardData,
+  applyFilters,
   transformBorderNames,
+  setCCA3ToNameMap,
+  sortInAlphabeticalOrder,
 };

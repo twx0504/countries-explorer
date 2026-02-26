@@ -95,6 +95,7 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   border-radius: 5px;
   background-color: var(--bg-ui);
+  z-index: 100;
 }
 .toolbar__filter:focus-within {
   outline: 2px solid var(--text-clr);
@@ -188,6 +189,7 @@
   height: 100%;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   user-select: none;
+  background-color: var(--clr-white);
 }
 
 /* Force 2 columns for mid-range — don't leave it to auto-fill math */

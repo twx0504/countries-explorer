@@ -24,6 +24,12 @@ const COUNTRY_URL =
 
 const COUNTRY_INFO_URL = "https://restcountries.com/v3.1/name";
 
+// Storage
+const REST_COUNTRIES = "rest-countries";
+const CCA3_TO_NAME = "rest-countries-cca3-to-name";
+const THEME = "rest-countries-theme";
+const FILTER = "rest-countries-filter";
+
 export {
   LIGHT_THEME,
   DARK_THEME,
@@ -41,4 +47,8 @@ export {
   NAME,
   COUNTRY_URL,
   COUNTRY_INFO_URL,
+  CCA3_TO_NAME,
+  REST_COUNTRIES,
+  THEME,
+  FILTER,
 };

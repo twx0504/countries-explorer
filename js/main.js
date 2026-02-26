@@ -1,7 +1,14 @@
 import { debounce } from "./utils/debounce.js";
-import { filterByRegion, filterBySearch } from "./data/data.js";
+
+import { saveToStorage, loadFromStorage } from "./utils/storage.js";
 import {
-  init,
+  fetchAll,
+  createCardData,
+  setCCA3ToNameMap,
+  applyFilters,
+  sortInAlphabeticalOrder,
+} from "./data/data.js";
+import {
   renderCountryCards,
   showCountryDetail,
   hideCountryDetail,
@@ -9,14 +16,61 @@ import {
   updateFilterOptions,
   toggleTheme,
   resetHomeView,
+  resetSearchBar,
+  applyTheme,
 } from "./view/view.js";
+import { CCA3_TO_NAME, REST_COUNTRIES, THEME } from "./data/constants.js";
 
 // DOM References
 const searchBar = document.querySelector(".js-toolbar__search-inp");
 const countries = document.querySelector(".js-countries");
 
+let countriesCache = [];
+let activeRegion = "";
+let activeSearch = "";
+
 init();
 
+/**
+ * Initialize the app by fetching all countries and rendering the country cards.
+ *
+ * @returns {Promise<void>}
+ */
+async function init() {
+  countriesCache = loadFromStorage(REST_COUNTRIES);
+  const cca3ToNameCache = loadFromStorage(CCA3_TO_NAME);
+  const themeCache = loadFromStorage(THEME);
+
+  if (themeCache) {
+    applyTheme(themeCache);
+  }
+
+  if (countriesCache && cca3ToNameCache) {
+    renderCountryCards(countriesCache);
+    setCCA3ToNameMap(cca3ToNameCache);
+    return;
+  }
+
+  const { countries, cca3ToName } = await fetchAll();
+
+  let cardData = createCardData(countries);
+  cardData = sortInAlphabeticalOrder(cardData);
+  countriesCache = cardData;
+  setCCA3ToNameMap(cca3ToName);
+  resetActiveFilters();
+  saveToStorage(REST_COUNTRIES, cardData);
+  saveToStorage(CCA3_TO_NAME, cca3ToName);
+  renderCountryCards(cardData);
+}
+
+/**
+ * Reset active region and search filter state to their defaults.
+ * Called on fetchAll to ensure a clean state on re-initialization.
+ */
+function resetActiveFilters() {
+  activeRegion = "";
+  activeSearch = "";
+}
 // Filter
 
 /**
@@ -24,9 +78,20 @@ init();
  * @param {HTMLElement} target - The clicked filter item element.
  */
 function handleFilterOptions(target) {
-  const currentRegion = target.dataset.region;
-  const filteredData = filterByRegion(currentRegion);
-  updateFilterOptions(currentRegion, filteredData);
+  const selectedRegion = target.dataset.region;
+  activeRegion = selectedRegion;
+
+  if (activeRegion === "") {
+    resetActiveFilters();
+    resetSearchBar(searchBar);
+  }
+
+  const filteredData = applyFilters(countriesCache, {
+    region: activeRegion,
+    search: activeSearch,
+  });
+
+  updateFilterOptions(activeRegion, filteredData);
   toggleFilterOptions();
 }
 
@@ -42,7 +107,11 @@ searchBar.addEventListener("input", debouncedHandleSearch);
  */
 function handleSearch(e) {
   const searchText = e.target.value.trim();
-  const filteredData = filterBySearch(searchText);
+  activeSearch = searchText;
+  const filteredData = applyFilters(countriesCache, {
+    search: activeSearch,
+    region: activeRegion,
+  });
   renderCountryCards(filteredData);
 }
 
@@ -66,7 +135,7 @@ function handleActions(e) {
   // Navigate home
   if (target.classList.contains("js-header__home-link")) {
     e.preventDefault();
-    return resetHomeView();
+    return resetHomeView(countriesCache);
   }
 
   // Toggle light/dark theme
@@ -84,6 +153,7 @@ function handleActions(e) {
 
   // Go back from country detail to home
   if (target.classList.contains("js-back-link")) {
+    console.log("click");
     e.preventDefault();
     return hideCountryDetail();
   }
